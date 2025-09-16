@@ -1,20 +1,14 @@
 module SlashConsole
   class ConsoleController < ApplicationController
-    # Don't use any layout since we need full control of the HTML
     layout false
 
-    # Skip CSRF protection since console will handle its own security
     skip_before_action :verify_authenticity_token, if: -> { defined?(verify_authenticity_token) }
 
-    # Authentication filter chain for production
     before_action :ensure_credentials_configured, if: -> { Rails.env.production? }
     before_action :authenticate_user, if: -> { Rails.env.production? }
 
     def index
-      # Call the console helper provided by web-console gem
       console
-
-      # Render a simple view that will have the console injected
       render :index
     end
 
