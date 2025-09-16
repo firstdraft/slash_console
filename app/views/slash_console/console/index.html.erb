@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rails Console</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    /* Hide all content - console will fill the page */
+    body > * {
+      display: none !important;
+    }
+
+    /* Ensure the web-console div fills the entire viewport */
+    #console {
+      display: block !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 999999 !important;
+    }
+  </style>
+</head>
+<body>
+  <!-- The console helper will inject the web-console here -->
+</body>
+</html>
