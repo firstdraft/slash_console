@@ -1,4 +1,4 @@
 SlashConsole::Engine.routes.draw do
-  get "console" => "console#index", as: :console
+  get "console" => "console#index", :as => :console
   root to: "console#index"
 end

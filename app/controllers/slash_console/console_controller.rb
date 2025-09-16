@@ -17,7 +17,7 @@ module SlashConsole
     def ensure_credentials_configured
       if ENV["ADMIN_USERNAME"].blank? || ENV["ADMIN_PASSWORD"].blank?
         render plain: 'Before you can access the console, you must set environment variables called "ADMIN_USERNAME" and "ADMIN_PASSWORD".',
-               status: :service_unavailable
+          status: :service_unavailable
       end
     end
 
