@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.2] - 2025-09-15
+
+### Fixed
+- Configure web-console earlier in boot process using before_initialize
+- Properly initialize web_console config to prevent production deployment errors
+
 ## [0.1.1] - 2025-09-15
 
 ### Fixed
