@@ -2,6 +2,12 @@
 
 A Rails engine that provides a web-based console interface at `/rails/console`, allowing easy access to a Rails console in both development and production environments.
 
+⚠️ **Security Warning**: This gem provides direct access to the `rails console`. Anyone who accesses it can run arbitrary code on the server: stealing/deleting all your data, planting bugs, sending scam emails, mining cryptocurrency, etc. So, be careful.
+
+- Only use this gem in applications where the security trade-offs are acceptable. Basically, only for toy apps/proofs-of-concept/portfolio projects that contain only sample data. Never use this gem when real user data is at risk.
+- For serious apps, SSH into the server and run `rails console` at the command-line. This may require upgrading your hosting from free to paid, but you should be doing that anyway if you have real users.
+- Make up a strong, unique `ADMIN_PASSWORD` for each app.
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -10,7 +16,7 @@ Add this line to your application's Gemfile:
 gem "slash_console"
 ```
 
-And then execute:
+And then:
 
 ```bash
 bundle install
@@ -22,15 +28,11 @@ That's it! Navigate to `/rails/console` in your browser.
 
 ### Development
 
-In development, no authentication is required. Simply visit:
-
-```
-http://localhost:3000/rails/console
-```
+In development, no authentication is required. Simply visit `/rails/console`.
 
 ### Production
 
-For production use, authentication is **required**. Set these environment variables:
+For production use, authentication is required. Set these environment variables:
 
 ```bash
 ADMIN_USERNAME="choose_your_own_username"
@@ -39,15 +41,9 @@ ADMIN_PASSWORD="choose_your_own_strong_password"
 
 Without these environment variables, you'll see an error message explaining what needs to be configured.
 
-⚠️ **Security Warning**: This gem provides direct access to your Rails console. In production:
-
-- Only use for applications where the security trade-offs are acceptable. Basically, only for toy apps; never where real user data is at risk. For serious apps, SSH into the server and run `rails console` at the command-line.
-- Make up a strong, unique `ADMIN_PASSWORD` for each app.
-- In production, the gem allows console access from all IP addresses (0.0.0.0/0) when authenticated. The authentication layer is your only protection.
-
 ## How It Works
 
-SlashConsole is a lightweight wrapper around the excellent `web-console` gem. It:
+SlashConsole is a lightweight wrapper around [the excellent `web-console` gem](https://github.com/rails/web-console). It:
 
 1. Provides a dedicated route for console access (instead of only on error pages).
 2. Renders a full-page console interface.
