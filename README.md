@@ -43,6 +43,7 @@ Without these environment variables, you'll see an error message explaining what
 
 - Only use for applications where the security trade-offs are acceptable. Basically, only for toy apps; never where real user data is at risk. For serious apps, SSH into the server and run `rails console` at the command-line.
 - Make up a strong, unique `ADMIN_PASSWORD` for each app.
+- In production, the gem allows console access from all IP addresses (0.0.0.0/0) when authenticated. The authentication layer is your only protection.
 
 ## How It Works
 

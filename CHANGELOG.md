@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2025-09-15
+
+### Fixed
+- Allow console access from all IPs in production (with authentication)
+- Fix blank page issue on cloud platforms like Render
+
+### Changed
+- Add security note about IP allowlist in README
+
 ## [0.1.3] - 2025-09-15
 
 ### Changed
