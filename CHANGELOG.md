@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5] - 2025-09-15
+
+### Fixed
+- Load web-console extensions explicitly to fix blank page in production
+- Add full-page CSS for console element to ensure proper display
+- Use modern viewport units (100svh) for better mobile compatibility
+
 ## [0.1.4] - 2025-09-15
 
 ### Fixed
