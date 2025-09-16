@@ -7,5 +7,9 @@ module SlashConsole
         mount SlashConsole::Engine => "/rails", :as => :slash_console_engine
       end
     end
+
+    initializer "slash_console.configure_web_console" do |app|
+      app.config.web_console.development_only = false
+    end
   end
 end

@@ -8,6 +8,7 @@ Gem::Specification.new do |spec|
   spec.homepage = "https://github.com/firstdraft/slash_console"
   spec.summary = "Mountable Rails console at /rails/console"
   spec.description = "A Rails engine that provides a web-based console interface at /rails/console, with production authentication support."
+  spec.license = "MIT"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
