@@ -8,7 +8,7 @@ module SlashConsole
     before_action :authenticate_user, if: -> { Rails.env.production? }
 
     def index
-      console
+      console(SlashConsole.console_binding)
       render :index
     end
 
