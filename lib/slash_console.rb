@@ -1,4 +1,5 @@
 require "slash_console/version"
+require "slash_console/basic_auth_middleware"
 require "slash_console/engine"
 require "web-console"
 
