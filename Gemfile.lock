@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    slash_console (0.1.6)
+    slash_console (0.1.7)
       rails (>= 7.0)
-      web-console (>= 4.0)
+      web-console (>= 4.2.1)
 
 GEM
   remote: https://rubygems.org/
