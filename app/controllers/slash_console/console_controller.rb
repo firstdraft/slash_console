@@ -9,8 +9,8 @@ module SlashConsole
     # standard /rails mount point. These filters remain as a second layer
     # so the page stays protected if an application mounts the engine at a
     # custom path.
-    before_action :ensure_credentials_configured, if: -> { Rails.env.production? }
-    before_action :authenticate_user, if: -> { Rails.env.production? }
+    before_action :ensure_credentials_configured, if: -> { BasicAuthMiddleware.authentication_required? }
+    before_action :authenticate_user, if: -> { BasicAuthMiddleware.authentication_required? }
 
     def index
       console(SlashConsole.console_binding)

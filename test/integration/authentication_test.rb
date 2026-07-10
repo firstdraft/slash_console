@@ -18,8 +18,12 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     ENV["ADMIN_PASSWORD"] = @original_password
   end
 
+  def in_env(name, &block)
+    Rails.stub(:env, ActiveSupport::EnvironmentInquirer.new(name), &block)
+  end
+
   def in_production(&block)
-    Rails.stub(:env, ActiveSupport::EnvironmentInquirer.new("production"), &block)
+    in_env("production", &block)
   end
 
   def credentials(username, password)
@@ -38,6 +42,14 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
   test "wrong credentials are refused on the console page in production" do
     in_production do
       get "/rails/console", headers: credentials(USERNAME, "wrong")
+    end
+
+    assert_response :unauthorized
+  end
+
+  test "a malformed authorization header is refused, not an error" do
+    in_production do
+      get "/rails/console", headers: {"Authorization" => "Basic #{["nocolon"].pack("m0")}"}
     end
 
     assert_response :unauthorized
@@ -116,8 +128,34 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_includes response.body, "ADMIN_PASSWORD"
   end
 
-  test "the controller still protects custom mount points in production" do
+  test "custom deployed environments like staging also require authentication" do
+    in_env("staging") do
+      get "/rails/console"
+    end
+
+    assert_response :unauthorized
+
+    in_env("staging") do
+      put EVALUATOR_PATH, params: {input: "1 + 1"}, xhr: true
+    end
+
+    assert_response :unauthorized
+
+    in_env("staging") do
+      get "/rails/console", headers: credentials(USERNAME, PASSWORD)
+    end
+
+    assert_response :success
+  end
+
+  test "the controller still protects custom mount points in deployed environments" do
     in_production do
+      get "/slash_console/console"
+    end
+
+    assert_response :unauthorized
+
+    in_env("staging") do
       get "/slash_console/console"
     end
 
@@ -130,7 +168,15 @@ class AuthenticationTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "no authentication is required outside production" do
+  test "no authentication is required in development" do
+    in_env("development") do
+      get "/rails/console"
+    end
+
+    assert_response :success
+  end
+
+  test "no authentication is required in the test environment" do
     get "/rails/console"
 
     assert_response :success

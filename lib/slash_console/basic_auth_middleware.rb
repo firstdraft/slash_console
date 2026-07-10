@@ -1,5 +1,5 @@
 module SlashConsole
-  # Basic authentication for the console in production.
+  # Basic authentication for the console in deployed environments.
   #
   # Authentication must happen in the middleware stack, not in
   # ConsoleController: web-console's evaluator endpoints (PUT/POST
@@ -20,6 +20,14 @@ module SlashConsole
     CONSOLE_PATHS = %r{\A/rails(?:/(?:console)?(?:\.[^/]*)?/?)?\z}
 
     class << self
+      # Development and test are the only environments that get an open
+      # console. Any deployed environment -- production, staging, preview,
+      # or anything else -- must present credentials, because the engine
+      # force-enables web-console everywhere and allows all IPs.
+      def authentication_required?
+        !(Rails.env.development? || Rails.env.test?)
+      end
+
       def credentials_configured?
         ENV["ADMIN_USERNAME"].present? && ENV["ADMIN_PASSWORD"].present?
       end
@@ -35,14 +43,13 @@ module SlashConsole
     end
 
     def call(env)
-      return @app.call(env) unless Rails.env.production? && protects?(env[Rack::PATH_INFO].to_s)
+      return @app.call(env) unless self.class.authentication_required? && protects?(env[Rack::PATH_INFO].to_s)
 
       unless self.class.credentials_configured?
         return [503, {"content-type" => "text/plain"}, [CREDENTIALS_MESSAGE]]
       end
 
-      auth = Rack::Auth::Basic::Request.new(env)
-      if auth.provided? && auth.basic? && self.class.authorized?(*auth.credentials)
+      if valid_credentials?(env)
         @app.call(env)
       else
         unauthorized
@@ -50,6 +57,17 @@ module SlashConsole
     end
 
     private
+
+    # Destructures rather than splatting: Rack 2 (Rails 7.0 apps) does not
+    # validate credential arity in Request#basic?, so a header whose
+    # decoded value lacks a colon would otherwise raise instead of 401ing.
+    def valid_credentials?(env)
+      auth = Rack::Auth::Basic::Request.new(env)
+      return false unless auth.provided? && auth.basic?
+
+      username, password = auth.credentials
+      self.class.authorized?(username, password)
+    end
 
     def protects?(path)
       CONSOLE_PATHS.match?(path) || evaluator_path?(path)
