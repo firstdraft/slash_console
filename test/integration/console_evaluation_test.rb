@@ -44,4 +44,16 @@ class ConsoleEvaluationTest < ActionDispatch::IntegrationTest
     second_session = start_console_session
     assert_match(/NameError/, evaluate(second_session, "leaky"))
   end
+
+  test "stored sessions are capped so page loads cannot pin memory forever" do
+    max = SlashConsole::ConsoleController::MAX_STORED_SESSIONS
+    oldest_session = start_console_session
+
+    (max + 1).times { start_console_session }
+    newest_session = start_console_session
+
+    assert_operator WebConsole::Session.inmemory_storage.size, :<=, max
+    assert_nil WebConsole::Session.find(oldest_session)
+    assert_equal "=> 42\n", evaluate(newest_session, "6 * 7")
+  end
 end
