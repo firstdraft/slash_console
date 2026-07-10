@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.7] - 2026-07-10
+
+### Security
+- Authentication is now required in every environment except `development`
+  and `test`, instead of only `production`. The engine force-enables
+  web-console and allows all IPs everywhere, so a `staging`/`preview`
+  deployment previously served an unauthenticated console.
+- Require web-console >= 4.2.1: versions before 4.1.0 do not put CSP
+  nonces on injected assets (silently breaking under a strict CSP), and
+  versions before 4.2.1 lack Rack 3 / Rails 7.1 support.
+- Enabled `rubygems_mfa_required`, so future gem pushes and yanks require
+  a multi-factor-authenticated RubyGems session.
+
+### Fixed
+- A malformed Basic Authorization header (credentials without a colon)
+  now gets a 401 on Rack 2 instead of raising.
+- Stored console sessions are capped at 50 per process. web-console's
+  session store is never evicted otherwise, so each console page load
+  pinned a binding in memory until process restart.
+
+### Removed
+- Deleted the engine's unused application layout, which referenced a
+  stylesheet that does not ship with the gem, and a no-op CSRF skip in
+  the console controller (the console page is GET-only).
+
 ## [0.1.6] - 2026-07-10
 
 ### Security
@@ -78,6 +103,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Development mode with no authentication required
 - Standard Ruby style guide compliance
 
-[Unreleased]: https://github.com/firstdraft/slash_console/compare/v0.1.6...HEAD
+[Unreleased]: https://github.com/firstdraft/slash_console/compare/v0.1.7...HEAD
+[0.1.7]: https://github.com/firstdraft/slash_console/compare/v0.1.6...v0.1.7
 [0.1.6]: https://github.com/firstdraft/slash_console/compare/v0.1.0...v0.1.6
 [0.1.0]: https://github.com/firstdraft/slash_console/releases/tag/v0.1.0

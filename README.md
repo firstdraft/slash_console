@@ -6,7 +6,7 @@ A Rails engine that provides a web-based console interface at `/rails/console`, 
 
 - Only use this gem in applications where the security trade-offs are acceptable. Basically, only for toy apps/proofs-of-concept/portfolio projects that contain only sample data. Never use this gem when real user data is at risk.
 - For serious apps, SSH into the server and run `rails console` at the command-line. This may require upgrading your hosting from free to paid, but you should be doing that anyway if you have real users.
-- Make up a strong, unique `ADMIN_PASSWORD` for each app.
+- Make up a strong, unique `ADMIN_PASSWORD` for each app. There is no rate limiting on the password prompt, so a short or guessable password can be brute-forced.
 
 ## Installation
 
@@ -30,9 +30,9 @@ That's it! Navigate to `/rails/console` in your browser.
 
 In development, no authentication is required. Simply visit `/rails/console`.
 
-### Production
+### Deployed environments
 
-For production use, authentication is required. Set these environment variables:
+In every environment other than `development` and `test` — production, staging, previews, anything — authentication is required. Set these environment variables:
 
 ```bash
 ADMIN_USERNAME="choose_your_own_username"
@@ -41,14 +41,18 @@ ADMIN_PASSWORD="choose_your_own_strong_password"
 
 Without these environment variables, you'll see an error message explaining what needs to be configured.
 
+If your server runs multiple processes (e.g. Puma workers), console sessions live in the memory of whichever process rendered the page, so evaluating code may intermittently report that your session is no longer available. Run a single process (e.g. `WEB_CONCURRENCY=1`) for a reliable console.
+
 ## How It Works
 
 SlashConsole is a lightweight wrapper around [the excellent `web-console` gem](https://github.com/rails/web-console). It:
 
 1. Provides a dedicated route for console access (instead of only on error pages).
 2. Renders a full-page console interface, including in apps that enforce a strict nonce-based Content Security Policy.
-3. In production, requires basic authentication via a Rack middleware that protects both the console page and web-console's code-evaluation endpoints (`/__web_console/repl_sessions/:id`).
+3. In every environment except development and test, requires basic authentication via a Rack middleware that protects both the console page and web-console's code-evaluation endpoints (`/__web_console/repl_sessions/:id`).
 4. Evaluates console input at the top level, so constants resolve the same way as in `bin/rails console`.
+
+Note that SlashConsole configures web-console itself: it activates it in all environments and clears its IP allowlist (authentication replaces it). Any `config.web_console` settings in your app will be overridden.
 
 ## Development
 
