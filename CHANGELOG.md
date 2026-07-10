@@ -7,8 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-07-10
+
+### Security
+- Production Basic authentication moved from the controller into a Rack
+  middleware inserted in front of `WebConsole::Middleware`, so it now covers
+  web-console's evaluator endpoints (`/__web_console/repl_sessions/:id`) as
+  well as the console page. Previously a console session ID acted as an
+  unauthenticated bearer token for code execution until process restart.
+
 ### Fixed
-- Reuse Rails' per-request Content Security Policy nonce for the console stylesheet and injected web-console assets
+- The console renders under a strict nonce-based Content Security Policy.
+  The page stylesheet carries Rails' per-request nonce, and requesting the
+  nonce during rendering makes it available to web-console's injected
+  scripts even when the app hoists the CSP middleware above web-console
+  (previously such apps got a nonempty header nonce but `nonce=""` scripts,
+  i.e. a blank console).
+- Console input evaluates in a fresh top-level binding, so constants
+  resolve the same way as in `bin/rails console` instead of inside the
+  engine's namespace (`ApplicationController` no longer resolves to
+  `SlashConsole::ApplicationController`, and app constants no longer need a
+  leading `::`). Local variables persist within a console session but not
+  across sessions.
+- Removed the duplicate `WebConsole::Middleware` the engine inserted
+  alongside the copy web-console's own railtie already adds.
 
 ## [0.1.5] - 2025-09-15
 
@@ -56,5 +78,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Development mode with no authentication required
 - Standard Ruby style guide compliance
 
-[Unreleased]: https://github.com/firstdraft/slash_console/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/firstdraft/slash_console/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/firstdraft/slash_console/compare/v0.1.0...v0.1.6
 [0.1.0]: https://github.com/firstdraft/slash_console/releases/tag/v0.1.0

@@ -46,19 +46,24 @@ Without these environment variables, you'll see an error message explaining what
 SlashConsole is a lightweight wrapper around [the excellent `web-console` gem](https://github.com/rails/web-console). It:
 
 1. Provides a dedicated route for console access (instead of only on error pages).
-2. Renders a full-page console interface.
-3. Uses basic authentication when in production.
+2. Renders a full-page console interface, including in apps that enforce a strict nonce-based Content Security Policy.
+3. In production, requires basic authentication via a Rack middleware that protects both the console page and web-console's code-evaluation endpoints (`/__web_console/repl_sessions/:id`).
+4. Evaluates console input at the top level, so constants resolve the same way as in `bin/rails console`.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests.
+After checking out the repo, run `bundle install` to install dependencies.
 
 To install this gem onto your local machine, run `bundle exec rake install`.
 
 ### Running Tests
 
+The test suite needs a local PostgreSQL server. Prepare the test database once, then:
+
 ```bash
-bundle exec rake test
+bundle exec rake app:db:test:prepare
+bundle exec rake test         # integration + unit tests
+bundle exec rake test:system  # browser smoke tests (needs Chrome)
 ```
 
 ### Linting
