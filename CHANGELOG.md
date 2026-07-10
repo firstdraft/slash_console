@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Reuse Rails' per-request Content Security Policy nonce for the console stylesheet and injected web-console assets
+
 ## [0.1.5] - 2025-09-15
 
 ### Fixed

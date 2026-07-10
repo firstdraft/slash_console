@@ -3,7 +3,9 @@
   <head>
     <title>Rails Console</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
+    <%# Asking Rails for the nonce here also makes it available to the
+        web-console middleware when it injects the console scripts below. %>
+    <style nonce="<%= content_security_policy_nonce %>">
       body, html {
         margin: 0;
         padding: 0;
