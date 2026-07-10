@@ -9,8 +9,10 @@ gem "pg"
 
 gem "propshaft"
 
-# Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
-gem "rubocop-rails-omakase", require: false
+group :test do
+  gem "capybara"
+  gem "selenium-webdriver"
+end
 
 # Start debugger with binding.b [https://github.com/ruby/debug]
 # gem "debug", ">= 1.0.0"
