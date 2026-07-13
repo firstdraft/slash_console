@@ -52,7 +52,7 @@ jobs:
         run: bundle exec rake app:db:test:prepare test test:system
 
       - name: Keep screenshots from failed system tests
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: screenshots
